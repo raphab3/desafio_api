@@ -40,13 +40,4 @@ public class Client implements Serializable {
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private List<Order> orders;
 
-    public Client() {
-    }
-
-    public Client(Long id, String name, String cpf, String birthDate) {
-        this.id = id;
-        this.name = name;
-        this.cpf = cpf;
-        this.birthDate = birthDate;
-    }
 }

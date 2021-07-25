@@ -1,19 +1,21 @@
 package br.com.backend.desafio_api.modules.clients.infra.dtos;
 
 import br.com.backend.desafio_api.modules.clients.entities.Client;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class ClientDto {
-    private final Long id;
+@AllArgsConstructor
+public class ClientCreateDto {
     private final String name;
     private final String cpf;
     private final String birthDate;
 
-    public ClientDto(Client entity) {
-        this.id = entity.getId();
+
+    public ClientCreateDto(ClientCreateDto entity) {
         this.name = entity.getName();
         this.cpf = entity.getCpf();
         this.birthDate = entity.getBirthDate();
     }
+
 }
