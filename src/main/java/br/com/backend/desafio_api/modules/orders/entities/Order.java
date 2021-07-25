@@ -13,8 +13,10 @@ import java.io.Serializable;
 @EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 public class Order implements Serializable {
+    private static final long SerialVersionUID = 1L;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 

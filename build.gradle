@@ -12,9 +12,6 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
-	compileClasspath {
-		resolutionStrategy.deactivateDependencyLocking()
-	}
 }
 
 repositories {

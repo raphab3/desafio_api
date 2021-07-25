@@ -31,14 +31,14 @@ public class DesafioApiApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
 
-        Client cli1 = new Client(1L, "Rafa", "08420698440", "16/03/1991");
-        Client cli2 = new Client(2L, "Rafa2", "08420698440", "16/03/1991");
+        Client cli1 = new Client(null, "Rafa", "08420698440", "16/03/1991");
+        Client cli2 = new Client(null, "Rafa2", "08420698440", "16/03/1991");
 
 
-        Order or1 = new Order(1L, 60.0, cli1);
-        Order or2 = new Order(2L, 70.0, cli1);
-        Order or3 = new Order(3L, 35.0, cli2);
-        Order or4 = new Order(4L, 640.0, cli2);
+        Order or1 = new Order(null, 60.0, cli1);
+        Order or2 = new Order(null, 70.0, cli1);
+        Order or3 = new Order(null, 35.0, cli2);
+        Order or4 = new Order(null, 640.0, cli2);
 
 
         clientRepository.save(cli1);

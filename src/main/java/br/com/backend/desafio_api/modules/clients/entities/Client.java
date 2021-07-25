@@ -6,10 +6,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -18,8 +16,10 @@ import static javax.persistence.GenerationType.IDENTITY;
 @ToString
 @EqualsAndHashCode(of = "id")
 public class Client implements Serializable {
+    private static final long SerialVersionUID = 1L;
+
     @Id
-    @GeneratedValue(strategy = AUTO)
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -39,6 +39,9 @@ public class Client implements Serializable {
     @Setter(AccessLevel.NONE)
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private List<Order> orders;
+
+    public Client() {
+    }
 
     public Client(Long id, String name, String cpf, String birthDate) {
         this.id = id;
