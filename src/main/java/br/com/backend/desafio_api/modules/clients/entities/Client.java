@@ -1,26 +1,25 @@
 package br.com.backend.desafio_api.modules.clients.entities;
 
+import br.com.backend.desafio_api.modules.orders.entities.Order;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
+import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.GenerationType.IDENTITY;
 
-@Entity(name = "clients")
+@Entity
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
-@Data
-@AllArgsConstructor
 public class Client implements Serializable {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = AUTO)
     @Column(name = "id")
     private Long id;
 
@@ -36,6 +35,15 @@ public class Client implements Serializable {
     //    @OneToMany(mappedBy = "clientAddress", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     //    private List<Address> addresses;
     //
-    //    @OneToMany(mappedBy = "clientOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    //    private List<Order> orders;
+    @JsonIgnore
+    @Setter(AccessLevel.NONE)
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+    private List<Order> orders;
+
+    public Client(Long id, String name, String cpf, String birthDate) {
+        this.id = id;
+        this.name = name;
+        this.cpf = cpf;
+        this.birthDate = birthDate;
+    }
 }

@@ -10,5 +10,5 @@ public class ClientDto {
     private final Long id;
     private final String name;
     private final String cpf;
-    private final Date birthDate;
+    private final String birthDate;
 }
