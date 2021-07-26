@@ -15,6 +15,7 @@ import br.com.backend.desafio_api.modules.clients.entities.Client;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 @Getter
 @Setter
@@ -26,7 +27,8 @@ import lombok.*;
 public class Address implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "increment")
+    @GenericGenerator(name = "increment", strategy = "increment")
     @Column(name = "id")
     private long id;
 

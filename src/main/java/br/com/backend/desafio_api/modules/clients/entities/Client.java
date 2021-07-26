@@ -4,6 +4,7 @@ import br.com.backend.desafio_api.modules.addresses.entities.Address;
 import br.com.backend.desafio_api.modules.orders.entities.Order;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -22,7 +23,8 @@ public class Client implements Serializable {
     private static final long SerialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(generator = "increment")
+    @GenericGenerator(name = "increment", strategy = "increment")
     @Column(name = "id")
     private Long id;
 
