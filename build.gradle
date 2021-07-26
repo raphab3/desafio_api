@@ -27,6 +27,19 @@ repositories {
     mavenCentral()
 }
 
+task stage() {
+    dependsOn clean, war
+}
+
+war.mustRunAfter clean
+task copyToLib(type: Copy) {
+    into "$buildDir/server"
+    from(configurations.compile) {
+        include "webapp-runner*"
+    }
+}
+
+stage.dependsOn(copyToLib)
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -38,6 +51,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.3'
+
+    compile 'com.github.jsimone:webapp-runner:8.5.11.3'
+
 
     //// https://mvnrepository.com/artifact/io.springfox/springfox-swagger2
 //	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.0.1'
