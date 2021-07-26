@@ -1,12 +1,11 @@
 package br.com.backend.desafio_api.modules.clients.infra.controllers;
 
 import br.com.backend.desafio_api.modules.clients.entities.Client;
-import br.com.backend.desafio_api.modules.clients.infra.dtos.ClientCreateDto;
 import br.com.backend.desafio_api.modules.clients.infra.dtos.ClientDto;
+import br.com.backend.desafio_api.modules.clients.infra.dtos.ClientPersistDto;
 import br.com.backend.desafio_api.modules.clients.services.ClientService;
-import br.com.backend.desafio_api.modules.clients.services.exceptions.ServiceException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,25 +14,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "clients")
+@RequestMapping(value = "api/clients")
 @CrossOrigin("*")
+@Log4j2
 @RequiredArgsConstructor
 public class ClientController {
 
-    @Autowired
-    private ClientService clientService;
+    private final ClientService clientService;
 
-    @PostMapping
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Client> add(@RequestBody ClientCreateDto obj) {
-        Client client = clientService.insert(obj);
-        return ResponseEntity.ok().body(client);
+    public Client add(@RequestBody ClientPersistDto clientPersistDto) {
+        return clientService.insert(clientPersistDto);
     }
 
-    @GetMapping
-    public ResponseEntity<List<ClientDto>> findAll() {
-        List<ClientDto> list = clientService.findAll();
-        return ResponseEntity.ok().body(list);
+    @GetMapping()
+    public ResponseEntity<List<Client>> findAll() {
+        return clientService.findAll();
     }
 
     @GetMapping(value = "/page")
@@ -50,19 +47,18 @@ public class ClientController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ClientDto> findById(@PathVariable Long id) {
         try {
-            ClientDto client = clientService.findById(id);
+            ClientDto client = clientService.findByIdOrThrowBadRequestException(id);
             return ResponseEntity.ok().body(client);
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             return ResponseEntity.unprocessableEntity().build();
         }
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void update(@PathVariable Long id, @RequestBody Client clientDto) {
-        clientService.update(id, clientDto);
+    public void replace(@PathVariable Long id, @RequestBody ClientPersistDto clientPersistDto) {
+        clientService.update(id, clientPersistDto);
     }
-
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)

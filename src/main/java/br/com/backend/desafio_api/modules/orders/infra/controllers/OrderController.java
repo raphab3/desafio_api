@@ -1,32 +1,71 @@
 package br.com.backend.desafio_api.modules.orders.infra.controllers;
 
 import br.com.backend.desafio_api.modules.orders.entities.Order;
-import br.com.backend.desafio_api.modules.orders.repositories.OrderRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.com.backend.desafio_api.modules.orders.infra.dtos.OrderDto;
+import br.com.backend.desafio_api.modules.orders.infra.dtos.OrderPersistDto;
+import br.com.backend.desafio_api.modules.orders.infra.dtos.OrderUpdateDto;
+import br.com.backend.desafio_api.modules.orders.services.OrderService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "orders")
+@RequestMapping(value = "api/orders")
+@CrossOrigin("*")
+@Log4j2
+@RequiredArgsConstructor
 public class OrderController {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderService orderService;
 
-    @GetMapping
-    public ResponseEntity<List<Order>> findAll() {
-        List<Order> list = orderRepository.findAll();
+    @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
+    public Order add(@RequestBody OrderPersistDto orderPersistDto) {
+        log.info(orderPersistDto);
+        return orderService.insert(orderPersistDto);
+    }
+
+    @GetMapping()
+    @ResponseStatus(HttpStatus.OK)
+    public List<Order> findAll() {
+        return orderService.findAll();
+    }
+
+    @GetMapping(value = "/page")
+    public ResponseEntity<Page<Order>> findPage(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "size", defaultValue = "24") Integer size,
+            @RequestParam(value = "orderBy", defaultValue = "id") String orderBy,
+            @RequestParam(value = "direction", defaultValue = "DESC") String direction) {
+        Page<Order> list = orderService.findPage(page, size, direction, orderBy);
         return ResponseEntity.ok().body(list);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Order> findById(@PathVariable Long id) {
-        Order order = orderRepository.findById(id).get();
-        return ResponseEntity.ok().body(order);
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<OrderDto> findById(@PathVariable Long id) {
+        try {
+            OrderDto orderDto = orderService.findByIdOrThrowBadRequestException(id);
+            return ResponseEntity.ok().body(orderDto);
+        } catch (Exception e) {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void replace(@PathVariable Long id, @RequestBody OrderUpdateDto orderUpdateDto) {
+        orderService.update(id, orderUpdateDto);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable Long id) {
+        orderService.delete(id);
     }
 }

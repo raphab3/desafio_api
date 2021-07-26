@@ -1,17 +1,24 @@
 package br.com.backend.desafio_api.modules.orders.entities;
 
+import br.com.backend.desafio_api.modules.addresses.entities.Address;
 import br.com.backend.desafio_api.modules.clients.entities.Client;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
 
-@Entity(name = "orders")
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
 @AllArgsConstructor
+@NoArgsConstructor
+@Entity(name = "orders")
 public class Order implements Serializable {
     private static final long SerialVersionUID = 1L;
 
@@ -23,28 +30,17 @@ public class Order implements Serializable {
     @Column(name = "amount")
     private Double amount;
 
-//    @Column(name = "created_at")
-//    @CreationTimestamp
-//    private String createdAt;
-//
-//    @Column(name = "updated_at")
-//    @UpdateTimestamp
-//    private LocalDateTime updatedAt;
+    @Column(name = "created_at")
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-    //    @JsonIgnore
+    @Column(name = "updated_at")
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clientId")
-    private Client client;
+    private Client clientOrder;
 
-    public Order() {
-    }
-
-    public Order(long l, double v) {
-    }
-
-//
-//    public Order(long id, Double amount) {
-//        this.id = id;
-//        this.amount = amount;
-//    }
 }

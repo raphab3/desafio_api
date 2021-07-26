@@ -1,29 +1,35 @@
 package br.com.backend.desafio_api.modules.clients.services;
 
+import br.com.backend.desafio_api.modules.addresses.entities.Address;
 import br.com.backend.desafio_api.modules.clients.entities.Client;
-import br.com.backend.desafio_api.modules.clients.infra.dtos.ClientCreateDto;
 import br.com.backend.desafio_api.modules.clients.infra.dtos.ClientDto;
+import br.com.backend.desafio_api.modules.clients.infra.dtos.ClientPersistDto;
+import br.com.backend.desafio_api.modules.clients.infra.mapper.ClientMapper;
 import br.com.backend.desafio_api.modules.clients.repositories.ClientRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.com.backend.desafio_api.shared.exceptions.BadRequestExceptions;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class ClientService implements IClientService {
 
-    @Autowired
-    private ClientRepository clientRepository;
+    private final ClientMapper clientMapper;
+    private final ClientRepository clientRepository;
 
     @Override
-    public List<ClientDto> findAll() {
-        List<Client> list = clientRepository.findAll();
-        return list.stream().map(x -> new ClientDto(x)).collect(Collectors.toList());
+    public ResponseEntity<List<Client>> findAll() {
+        return new ResponseEntity<>(clientRepository.findAll(), HttpStatus.OK);
     }
 
     @Override
@@ -33,30 +39,34 @@ public class ClientService implements IClientService {
     }
 
     @Override
-    public ClientDto findById(Long id) {
-        Client client = clientRepository.findById(id).get();
-        ClientDto clientListDto = new ClientDto(client);
-        return clientListDto;
+    public ClientDto findByIdOrThrowBadRequestException(Long id) {
+        return clientRepository.findById(id).map(clientMapper::toClientDto)
+                .orElseThrow(() -> new BadRequestExceptions("Cliente não encontrado"));
     }
 
     @Override
-    public Client insert(ClientCreateDto clientCreateDto) {
-        Client c = new Client();
-        ClientCreateDto client = new ClientCreateDto(clientCreateDto);
-        c.setName(client.getName());
-        c.setCpf(client.getCpf());
-        c.setBirthDate(client.getBirthDate());
+    public Client insert(ClientPersistDto clientPersistDto) {
 
-        Client clientDto = clientRepository.save(c);
-        return clientDto;
+        Client newClient = clientMapper.toClienPersistDto(clientPersistDto);
+        Client savedClient = clientRepository.save(newClient);
+
+        for (Address address : savedClient.getAddresses()) {
+            address.setClientAddress(savedClient);
+        }
+        return clientRepository.save(savedClient);
     }
 
     @Override
-    public void update(Long id, Client obj) {
+    public void update(Long id, ClientPersistDto clientPersistDto) {
+
         Client client = clientRepository.findById(id).get();
-        client.setName(obj.getName());
-        client.setCpf(obj.getCpf());
-        client.setBirthDate(obj.getBirthDate());
+
+        clientMapper.toClientUpdateDto(client, clientPersistDto);
+
+        for (Address address : client.getAddresses()) {
+            address.setClientAddress(client);
+        }
+
         clientRepository.save(client);
     }
 

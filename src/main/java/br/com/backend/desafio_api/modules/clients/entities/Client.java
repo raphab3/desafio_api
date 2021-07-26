@@ -1,5 +1,6 @@
 package br.com.backend.desafio_api.modules.clients.entities;
 
+import br.com.backend.desafio_api.modules.addresses.entities.Address;
 import br.com.backend.desafio_api.modules.orders.entities.Order;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -10,11 +11,13 @@ import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-@Entity
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity(name = "clients")
 public class Client implements Serializable {
     private static final long SerialVersionUID = 1L;
 
@@ -32,12 +35,12 @@ public class Client implements Serializable {
     @Column(name = "birthDate")
     private String birthDate;
 
-    //    @OneToMany(mappedBy = "clientAddress", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    //    private List<Address> addresses;
-    //
-    @JsonIgnore
+    @OneToMany(mappedBy = "clientAddress", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses;
+
+//    @JsonIgnore
     @Setter(AccessLevel.NONE)
-    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "clientOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
 
 }

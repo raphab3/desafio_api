@@ -1,24 +1,24 @@
 package br.com.backend.desafio_api.modules.clients.services;
 
 import br.com.backend.desafio_api.modules.clients.entities.Client;
-import br.com.backend.desafio_api.modules.clients.infra.dtos.ClientCreateDto;
 import br.com.backend.desafio_api.modules.clients.infra.dtos.ClientDto;
+import br.com.backend.desafio_api.modules.clients.infra.dtos.ClientPersistDto;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface IClientService {
 
-    List<ClientDto> findAll();
+    ResponseEntity<List<Client>> findAll();
 
     Page<Client> findPage(Integer page, Integer size, String direction, String orderBy);
 
-    ClientDto findById(Long id);
+    ClientDto findByIdOrThrowBadRequestException(Long id);
 
-    Client insert(ClientCreateDto obj);
+    Client insert(ClientPersistDto clientPersistDto);
 
-    void update(Long id, Client obj);
+    void update(Long id, ClientPersistDto clientPersistDto);
 
     void delete(Long id);
 
